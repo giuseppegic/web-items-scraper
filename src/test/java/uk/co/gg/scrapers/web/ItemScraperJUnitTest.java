@@ -14,7 +14,9 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 
@@ -23,6 +25,8 @@ import static uk.co.gg.scrapers.web.matchers.InvalidStructureExceptionMatcher.is
 public class ItemScraperJUnitTest {
 	
 	private static MessageFormat validItemFormat;
+	
+	private static final String[] defaultItemValues={"title", "£0.10"};
 	
 	@Rule
 	public ExpectedException expected= ExpectedException.none();
@@ -64,8 +68,68 @@ public class ItemScraperJUnitTest {
 		final Element itemFragment=Jsoup.parseBodyFragment(readFile("invalid-title-item-format.html"));
 		
 		// Expect
-		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Unable to find title"));
+		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Unable to find Title"));
 		
+		// When
+		testSubject.scrapeItem(itemFragment);
+	}
+	
+	@Test
+	public void shouldExtractItemPrice() throws Exception{
+		// Given
+		final Element itemFragment=Jsoup.parseBodyFragment(injectPrice(validItemFormat, "£1.80"));
+		
+		// When
+		final Item item = testSubject.scrapeItem(itemFragment);
+		
+		// Then
+		assertThat(item.getPrice(), is(new BigDecimal("1.80")));
+	}
+	
+	@Test
+	public void shouldThrowInvalidStructureExceptionWhenItemPriceIsNotInPounds() throws Exception{
+		// Given
+		final Element itemFragment=Jsoup.parseBodyFragment(injectPrice(validItemFormat, "1.80"));
+		
+		// Expect
+		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price must be in Pounds"));
+				
+		// When
+		testSubject.scrapeItem(itemFragment);
+	}
+
+	@Test
+	public void shouldThrowInvalidStructureExceptionWhenItemPriceIsNotANumber() throws Exception{
+		// Given
+		final Element itemFragment=Jsoup.parseBodyFragment(injectPrice(validItemFormat, "£item"));
+		
+		// Expect
+		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price is not a number"));
+				
+		// When
+		testSubject.scrapeItem(itemFragment);
+	}
+	
+	@Test
+	public void shouldThrowInvalidStructureExceptionWhenItemPriceIsEmpty() throws Exception{
+		// Given
+		final Element itemFragment=Jsoup.parseBodyFragment(injectPrice(validItemFormat, ""));
+		
+		// Expect
+		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price cannot be empty"));
+				
+		// When
+		testSubject.scrapeItem(itemFragment);
+	}
+	
+	@Test
+	public void shouldThrowInvalidStructureExceptionWhenItemPriceIsNotFound() throws Exception{
+		// Given
+		final Element itemFragment=Jsoup.parseBodyFragment(readFile("invalid-price-item-format.html"));
+		
+		// Expect
+		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Unable to find Price"));
+				
 		// When
 		testSubject.scrapeItem(itemFragment);
 	}
@@ -75,7 +139,17 @@ public class ItemScraperJUnitTest {
 		return IOUtils.toString(stream);
 	}
 	
+	private String injectPrice(MessageFormat validItemFormat2, String price) {
+		final String[] itemValues = Arrays.copyOf(defaultItemValues, defaultItemValues.length);
+		itemValues[1] = price;
+		
+		return validItemFormat.format(itemValues);
+	}
+	
 	private String injectTitle(MessageFormat validItemFormat, String title) {
-		return validItemFormat.format(new Object[]{title});
+		final String[] itemValues = Arrays.copyOf(defaultItemValues, defaultItemValues.length);
+		itemValues[0] = title;
+		
+		return validItemFormat.format(itemValues);
 	}
 }

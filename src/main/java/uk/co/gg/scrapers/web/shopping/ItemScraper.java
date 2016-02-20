@@ -1,5 +1,7 @@
 package uk.co.gg.scrapers.web.shopping;
 
+import java.math.BigDecimal;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
@@ -26,19 +28,30 @@ public class ItemScraper {
 	public Item scrapeItem(Element itemFragment) throws InvalidStructureException {
 		final Item item = new Item();
 
-		final Element titleFragment = itemFragment.select(".productInfo > h3 > a").first();
-
-		if (titleFragment == null) {
-			throw new InvalidStructureException("Unable to find title", itemFragment.html());
+		item.setTitle(extractElement(".productInfo > h3 > a", "Title", itemFragment));
+		
+		final String price = extractElement(".pricePerUnit", "Price", itemFragment);
+		if(!price.startsWith("£")){
+			throw new InvalidStructureException("Price must be in Pounds", itemFragment.html());
 		}
-		final String title = titleFragment.ownText();
-		if (StringUtils.isEmpty(title)) {
-			throw new InvalidStructureException("Title cannot be empty", itemFragment.html());
+		try {
+			item.setPrice(new BigDecimal(price.substring(1)));
+		} catch (NumberFormatException e) {
+			throw new InvalidStructureException("Price is not a number", itemFragment.html());
 		}
-
-		item.setTitle(titleFragment.ownText());
-
 		return item;
 	}
 
+	private String extractElement(String selector, String elementName, Element itemFragment) throws InvalidStructureException {
+		final Element priceFragment = itemFragment.select(selector).first();
+
+		if (priceFragment == null) {
+			throw new InvalidStructureException("Unable to find " + elementName, itemFragment.html());
+		}
+		final String price = priceFragment.ownText();
+		if (StringUtils.isEmpty(price)) {
+			throw new InvalidStructureException(elementName + " cannot be empty", itemFragment.html());
+		}
+		return priceFragment.ownText();
+	}
 }
