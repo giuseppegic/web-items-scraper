@@ -1,16 +1,8 @@
 package uk.co.gg.scrapers.web.shopping;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import uk.co.gg.scrapers.web.shopping.ItemScraper;
-import uk.co.gg.shopping.item.Item;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static uk.co.gg.scrapers.web.matchers.InvalidStructureExceptionMatcher.isInvalidHtmlFragmentWithError;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,8 +11,14 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import static uk.co.gg.scrapers.web.matchers.InvalidStructureExceptionMatcher.isInvalidHtmlFragmentWithError;
+import uk.co.gg.shopping.Item;
 
 public class ItemScraperJUnitTest {
 	

@@ -3,7 +3,7 @@ package uk.co.gg.scrapers.web.shopping;
 import org.jsoup.nodes.Element;
 
 import uk.co.gg.scrapers.web.InvalidStructureException;
-import uk.co.gg.shopping.item.Item;
+import uk.co.gg.shopping.Item;
 
 /**
  * Scraper to extract all relevant detailed information out of a HTML fragment.

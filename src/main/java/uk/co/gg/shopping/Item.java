@@ -1,4 +1,4 @@
-package uk.co.gg.shopping.item;
+package uk.co.gg.shopping;
 
 import java.math.BigDecimal;
 

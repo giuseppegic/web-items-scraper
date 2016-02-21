@@ -16,7 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import uk.co.gg.shopping.item.Item;
+import uk.co.gg.shopping.Item;
 
 public class ItemDetailsScraperJUnitTest {
 

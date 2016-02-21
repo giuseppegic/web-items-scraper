@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import org.jsoup.nodes.Element;
 
 import uk.co.gg.scrapers.web.InvalidStructureException;
-import uk.co.gg.shopping.item.Item;
+import uk.co.gg.shopping.Item;
 
 /**
  * Scraper to extract all relevant information out of a HTML fragment.
