@@ -1,4 +1,4 @@
-package uk.co.gg.scrapers.web;
+package uk.co.gg.scrapers.web.shopping;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
