@@ -42,9 +42,10 @@ public class ItemScraperJUnitTest {
 	public void shouldExtractItemTitle() throws Exception{
 		// Given
 		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingTitle("sample Title"));
+		final Item item = new Item();
 		
 		// When
-		final Item item = testSubject.scrapeItem(itemFragment);
+		testSubject.scrapeItem(itemFragment, item);
 		
 		// Then
 		assertThat(item.getTitle(), is("sample Title"));
@@ -59,7 +60,7 @@ public class ItemScraperJUnitTest {
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Title cannot be empty"));
 		
 		// When
-		testSubject.scrapeItem(itemFragment);
+		testSubject.scrapeItem(itemFragment, new Item());
 	}
 	
 	@Test
@@ -71,16 +72,17 @@ public class ItemScraperJUnitTest {
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Unable to find Title"));
 		
 		// When
-		testSubject.scrapeItem(itemFragment);
+		testSubject.scrapeItem(itemFragment, new Item());
 	}
 	
 	@Test
 	public void shouldExtractItemPrice() throws Exception{
 		// Given
 		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice("£1.80"));
+		final Item item = new Item();
 		
 		// When
-		final Item item = testSubject.scrapeItem(itemFragment);
+		testSubject.scrapeItem(itemFragment, item);
 		
 		// Then
 		assertThat(item.getPrice(), is(new BigDecimal("1.80")));
@@ -95,7 +97,7 @@ public class ItemScraperJUnitTest {
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price must be in Pounds"));
 				
 		// When
-		testSubject.scrapeItem(itemFragment);
+		testSubject.scrapeItem(itemFragment, new Item());
 	}
 
 	@Test
@@ -107,7 +109,7 @@ public class ItemScraperJUnitTest {
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price is not a number"));
 				
 		// When
-		testSubject.scrapeItem(itemFragment);
+		testSubject.scrapeItem(itemFragment, new Item());
 	}
 	
 	@Test
@@ -119,7 +121,7 @@ public class ItemScraperJUnitTest {
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price cannot be empty"));
 				
 		// When
-		testSubject.scrapeItem(itemFragment);
+		testSubject.scrapeItem(itemFragment, new Item());
 	}
 	
 	@Test
@@ -131,7 +133,7 @@ public class ItemScraperJUnitTest {
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Unable to find Price"));
 				
 		// When
-		testSubject.scrapeItem(itemFragment);
+		testSubject.scrapeItem(itemFragment, new Item());
 	}
 	
 	private static String readFile(String path) throws IOException {

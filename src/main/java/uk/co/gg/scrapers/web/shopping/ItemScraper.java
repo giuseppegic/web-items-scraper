@@ -2,7 +2,6 @@ package uk.co.gg.scrapers.web.shopping;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 
 import uk.co.gg.scrapers.web.InvalidStructureException;
@@ -14,23 +13,23 @@ import uk.co.gg.shopping.item.Item;
  * @author GiuseppeG
  *
  */
-public class ItemScraper {
+public class ItemScraper extends BasicScraper{
 
 	/**
 	 * Parse and extract information from an HTML fragment related to an item.
 	 * 
-	 * @param itemFragment the fragment containing the item to scrape.
+	 * <p> Extracted information is used to populate the given Item. </p>
 	 * 
-	 * @return the Item containing all scraped information.
+	 * @param itemFragment the fragment containing the item to scrape.
+	 * @param item the Item to populate.
 	 * @throws InvalidStructureException
+	 * 
 	 * @see Element
 	 */
-	public Item scrapeItem(Element itemFragment) throws InvalidStructureException {
-		final Item item = new Item();
-
-		item.setTitle(extractElement(".productInfo > h3 > a", "Title", itemFragment));
+	public void scrapeItem(Element itemFragment, Item item) throws InvalidStructureException {
+		item.setTitle(extractElement(".productInfo > h3 > a", "Title", itemFragment, false));
 		
-		final String price = extractElement(".pricePerUnit", "Price", itemFragment);
+		final String price = extractElement(".pricePerUnit", "Price", itemFragment, false);
 		if(!price.startsWith("£")){
 			throw new InvalidStructureException("Price must be in Pounds", itemFragment.html());
 		}
@@ -39,19 +38,5 @@ public class ItemScraper {
 		} catch (NumberFormatException e) {
 			throw new InvalidStructureException("Price is not a number", itemFragment.html());
 		}
-		return item;
-	}
-
-	private String extractElement(String selector, String elementName, Element itemFragment) throws InvalidStructureException {
-		final Element priceFragment = itemFragment.select(selector).first();
-
-		if (priceFragment == null) {
-			throw new InvalidStructureException("Unable to find " + elementName, itemFragment.html());
-		}
-		final String price = priceFragment.ownText();
-		if (StringUtils.isEmpty(price)) {
-			throw new InvalidStructureException(elementName + " cannot be empty", itemFragment.html());
-		}
-		return priceFragment.ownText();
 	}
 }
