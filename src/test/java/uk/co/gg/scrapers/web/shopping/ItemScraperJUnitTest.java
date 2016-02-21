@@ -41,7 +41,7 @@ public class ItemScraperJUnitTest {
 	@Test
 	public void shouldExtractItemTitle() throws Exception{
 		// Given
-		final Element itemFragment=Jsoup.parseBodyFragment(injectTitle(validItemFormat, "sample Title"));
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingTitle("sample Title"));
 		
 		// When
 		final Item item = testSubject.scrapeItem(itemFragment);
@@ -53,7 +53,7 @@ public class ItemScraperJUnitTest {
 	@Test
 	public void shouldThrowInvalidStructureExceptionWhenTitleIsEmpty() throws Exception{
 		// Given
-		final Element itemFragment=Jsoup.parseBodyFragment(injectTitle(validItemFormat, ""));
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingTitle(""));
 		
 		// Expect
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Title cannot be empty"));
@@ -77,7 +77,7 @@ public class ItemScraperJUnitTest {
 	@Test
 	public void shouldExtractItemPrice() throws Exception{
 		// Given
-		final Element itemFragment=Jsoup.parseBodyFragment(injectPrice(validItemFormat, "£1.80"));
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice("£1.80"));
 		
 		// When
 		final Item item = testSubject.scrapeItem(itemFragment);
@@ -89,7 +89,7 @@ public class ItemScraperJUnitTest {
 	@Test
 	public void shouldThrowInvalidStructureExceptionWhenItemPriceIsNotInPounds() throws Exception{
 		// Given
-		final Element itemFragment=Jsoup.parseBodyFragment(injectPrice(validItemFormat, "1.80"));
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice("1.80"));
 		
 		// Expect
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price must be in Pounds"));
@@ -101,7 +101,7 @@ public class ItemScraperJUnitTest {
 	@Test
 	public void shouldThrowInvalidStructureExceptionWhenItemPriceIsNotANumber() throws Exception{
 		// Given
-		final Element itemFragment=Jsoup.parseBodyFragment(injectPrice(validItemFormat, "£item"));
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice("£item"));
 		
 		// Expect
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price is not a number"));
@@ -113,7 +113,7 @@ public class ItemScraperJUnitTest {
 	@Test
 	public void shouldThrowInvalidStructureExceptionWhenItemPriceIsEmpty() throws Exception{
 		// Given
-		final Element itemFragment=Jsoup.parseBodyFragment(injectPrice(validItemFormat, ""));
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice(""));
 		
 		// Expect
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price cannot be empty"));
@@ -139,14 +139,14 @@ public class ItemScraperJUnitTest {
 		return IOUtils.toString(stream);
 	}
 	
-	private String injectPrice(MessageFormat validItemFormat2, String price) {
+	private String formatItemInjectingPrice(String price) {
 		final String[] itemValues = Arrays.copyOf(defaultItemValues, defaultItemValues.length);
 		itemValues[1] = price;
 		
 		return validItemFormat.format(itemValues);
 	}
 	
-	private String injectTitle(MessageFormat validItemFormat, String title) {
+	private String formatItemInjectingTitle(String title) {
 		final String[] itemValues = Arrays.copyOf(defaultItemValues, defaultItemValues.length);
 		itemValues[0] = title;
 		
