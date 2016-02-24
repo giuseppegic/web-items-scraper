@@ -2,6 +2,7 @@ package uk.co.gg.web.scrapers.shopping;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 import org.jsoup.Connection.Response;
 import org.jsoup.nodes.Document;
@@ -69,6 +70,7 @@ public class ItemScraper extends BasicScraper{
 		
 		try {
 			final Response detailsResponse = jsoupParser.get(titleFragment.attr("href"));
+			item.setDetailsByteSize(toKilobytes(detailsResponse.bodyAsBytes().length)+"kb");
 			
 			if(detailsResponse != null){
 				final Document detailsDocument = detailsResponse.parse();
@@ -79,5 +81,9 @@ public class ItemScraper extends BasicScraper{
 			throw new InvalidStructureException("Unable to retrieve additional details", itemFragment.html());
 		}
 		
+	}
+
+	private String toKilobytes(int length) {
+		return new DecimalFormat("###,##0.##").format(length/1024D);
 	}
 }

@@ -171,6 +171,23 @@ public class ItemScraperJUnitTest {
 	}
 	
 	@Test
+	public void shouldExtractDetailsSize() throws Exception{
+		// Given
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingLinkToDetails("HREF1"));
+
+		when(jsoupParserMock.get(anyString())).thenReturn(responseMock);
+		when(responseMock.bodyAsBytes()).thenReturn(new byte[1512]);
+		
+		final Item item = new Item();
+		
+		// When
+		testSubject.scrapeItem(itemFragment, item);
+		
+		// Then
+		assertThat(item, is(anActualItemWithDetailsByteSize("1.48kb")));
+	}
+	
+	@Test
 	public void shouldExtractItemDetails() throws Exception{
 		// Given
 		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingLinkToDetails("HREF1"));
@@ -190,10 +207,14 @@ public class ItemScraperJUnitTest {
 		assertThat(item, is(anActualItemWithDescription("Item One Description")));
 	}
 	
-	private Matcher<Item> anActualItemWithDescription(String description) {
-		return hasProperty("description", is(description));
+	private Matcher<Item> anActualItemWithDescription(String expectedDescription) {
+		return hasProperty("description", is(expectedDescription));
 	}
 
+	private Matcher<Item> anActualItemWithDetailsByteSize(String expectedSize) {
+		return hasProperty("detailsByteSize", is(expectedSize));
+	}
+	
 	private Answer<Void> anItemWithDescription(final String description) {
 		return new Answer<Void>() {
 			@Override
@@ -206,35 +227,6 @@ public class ItemScraperJUnitTest {
 		};
 	}
 
-	private Matcher<Element> anItemWithLinkToDescription(final String expectedLinkToDetails) {
-		return new BaseMatcher<Element>() {
-
-			@Override
-			public boolean matches(Object actual) {
-				if (actual == null || !(actual instanceof Element)) {
-					return false;
-				}
-				final Element actualElement = (Element) actual;
-
-				if (!actualElement.hasAttr("href")) {
-					return false;
-				}
-				
-				final String linkToDetails = actualElement.attr("href");
-				
-				if(!linkToDetails.equals(expectedLinkToDetails)){
-					return false;
-				}
-
-				return true;
-			}
-
-			@Override
-			public void describeTo(Description description) {
-				description.appendText("expected href: " + expectedLinkToDetails);
-			}
-		};
-	}
 	
 	private static String readFile(String path) throws IOException {
 		final InputStream stream = ItemScraperJUnitTest.class.getResourceAsStream(path);
