@@ -2,19 +2,25 @@ package uk.co.gg.shopping;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 /**
  * An Item consists of a title, a price, a size and a description.
  * 
  * @author GiuseppeG
  */
+@JsonPropertyOrder({"title", "size", "unit_price", "description"})
 public class Item {
 
 	private String title;
 	
 	private String description;
 	
+	@JsonProperty("size")
 	private String detailsByteSize;
 	
+	@JsonProperty("unit_price")
 	private BigDecimal price;
 
 	public String getTitle() {

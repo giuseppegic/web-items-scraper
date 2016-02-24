@@ -69,6 +69,9 @@ public class ItemScraperJUnitTest {
 	
 	@Before
 	public void initTestSubject() throws IOException{
+		when(jsoupParserMock.get(anyString())).thenReturn(responseMock);
+		when(responseMock.bodyAsBytes()).thenReturn(new byte[1]);
+		
 		testSubject=new ItemScraper(jsoupParserMock, itemDetailsScraperMock);
 	}
 	
@@ -171,7 +174,7 @@ public class ItemScraperJUnitTest {
 	}
 	
 	@Test
-	public void shouldExtractDetailsSize() throws Exception{
+	public void shouldExtractDetailsSizeWithDecimal() throws Exception{
 		// Given
 		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingLinkToDetails("HREF1"));
 
@@ -185,6 +188,23 @@ public class ItemScraperJUnitTest {
 		
 		// Then
 		assertThat(item, is(anActualItemWithDetailsByteSize("1.48kb")));
+	}
+	
+	@Test
+	public void anActualItemWithRoundDetailsByteSize() throws Exception{
+		// Given
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingLinkToDetails("HREF1"));
+
+		when(jsoupParserMock.get(anyString())).thenReturn(responseMock);
+		when(responseMock.bodyAsBytes()).thenReturn(new byte[8*1024]);
+		
+		final Item item = new Item();
+		
+		// When
+		testSubject.scrapeItem(itemFragment, item);
+		
+		// Then
+		assertThat(item, is(anActualItemWithDetailsByteSize("8kb")));
 	}
 	
 	@Test

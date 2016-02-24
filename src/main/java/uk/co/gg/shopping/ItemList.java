@@ -4,10 +4,22 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemList {
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+/**
+ * An ItemList consists of a list of items and a total price.
+ * 
+ * @author GiuseppeG
+ *
+ */
+@JsonPropertyOrder({"results", "total"})
+public class ItemList {
+	
+	@JsonProperty("results")
 	private List<Item> items = new ArrayList<>();
 
+	@JsonProperty("total")
 	private BigDecimal totalPrice = new BigDecimal("0.00");
 
 	public void add(Item item) {
