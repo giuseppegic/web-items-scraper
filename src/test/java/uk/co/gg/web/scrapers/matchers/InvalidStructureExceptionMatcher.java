@@ -1,9 +1,9 @@
-package uk.co.gg.scrapers.web.matchers;
+package uk.co.gg.web.scrapers.matchers;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-import uk.co.gg.scrapers.web.InvalidStructureException;
+import uk.co.gg.web.scrapers.InvalidStructureException;
 
 public class InvalidStructureExceptionMatcher extends BaseMatcher<Exception>{
 	

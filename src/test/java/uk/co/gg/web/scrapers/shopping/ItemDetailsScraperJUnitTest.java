@@ -1,8 +1,8 @@
-package uk.co.gg.scrapers.web.shopping;
+package uk.co.gg.web.scrapers.shopping;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static uk.co.gg.scrapers.web.matchers.InvalidStructureExceptionMatcher.isInvalidHtmlFragmentWithError;
+import static uk.co.gg.web.scrapers.matchers.InvalidStructureExceptionMatcher.isInvalidHtmlFragmentWithError;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +39,7 @@ public class ItemDetailsScraperJUnitTest {
 		final Item item = new Item();
 		
 		// When
-		testSubject.scrapeItem(itemFragment, item);
+		testSubject.scrapeItemDetails(itemFragment, item);
 
 		// Then
 		assertThat(item.getDescription(), is("Item description"));
@@ -52,7 +52,7 @@ public class ItemDetailsScraperJUnitTest {
 		final Item item = new Item();
 		
 		// When
-		testSubject.scrapeItem(itemFragment, item);
+		testSubject.scrapeItemDetails(itemFragment, item);
 
 		// Then
 		assertThat(item.getDescription(), is("Item description"));
@@ -67,7 +67,7 @@ public class ItemDetailsScraperJUnitTest {
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Description cannot be empty"));
 		
 		// When
-		testSubject.scrapeItem(itemFragment, new Item());
+		testSubject.scrapeItemDetails(itemFragment, new Item());
 	}
 	
 	@Test
@@ -79,7 +79,7 @@ public class ItemDetailsScraperJUnitTest {
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Unable to find Description"));
 		
 		// When
-		testSubject.scrapeItem(itemFragment, new Item());
+		testSubject.scrapeItemDetails(itemFragment, new Item());
 	}
 	
 	private static String readFile(String path) throws IOException {

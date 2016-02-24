@@ -1,9 +1,9 @@
-package uk.co.gg.scrapers.web.shopping;
+package uk.co.gg.web.scrapers.shopping;
 
 import org.jsoup.nodes.Element;
 
-import uk.co.gg.scrapers.web.InvalidStructureException;
 import uk.co.gg.shopping.Item;
+import uk.co.gg.web.scrapers.InvalidStructureException;
 
 /**
  * Scraper to extract all relevant detailed information out of a HTML fragment.
@@ -24,8 +24,8 @@ public class ItemDetailsScraper extends BasicScraper{
 	 * 
 	 * @see Element
 	 */
-	public void scrapeItem(Element itemFragment, Item item) throws InvalidStructureException {
-		item.setDescription(extractElement(".productDataItemHeader:containsOwn(Description) + .productText", "Description", itemFragment, true));
+	public void scrapeItemDetails(Element itemFragment, Item item) throws InvalidStructureException {
+		item.setDescription(extractElementText(".productDataItemHeader:containsOwn(Description) + .productText", "Description", itemFragment, true));
 	}
 
 }

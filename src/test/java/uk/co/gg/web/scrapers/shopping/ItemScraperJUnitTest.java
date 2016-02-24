@@ -1,8 +1,14 @@
-package uk.co.gg.scrapers.web.shopping;
+package uk.co.gg.web.scrapers.shopping;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static uk.co.gg.scrapers.web.matchers.InvalidStructureExceptionMatcher.isInvalidHtmlFragmentWithError;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
+import static uk.co.gg.web.scrapers.matchers.InvalidStructureExceptionMatcher.isInvalidHtmlFragmentWithError;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,29 +17,59 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import uk.co.gg.shopping.Item;
+import uk.co.gg.web.parser.jsoup.JsoupParser;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ItemScraperJUnitTest {
 	
 	private static MessageFormat validItemFormat;
 	
-	private static final String[] defaultItemValues={"title", "£0.10"};
+	private static final String[] defaultItemValues={"title", "£0.10", "linkToDetails"};
 	
 	@Rule
 	public ExpectedException expected= ExpectedException.none();
 	
-	private ItemScraper testSubject=new ItemScraper();
+	@Mock
+	private ItemDetailsScraper itemDetailsScraperMock;
+	
+	@Mock
+	private JsoupParser jsoupParserMock;
+	
+	@Mock
+	private Response responseMock;
+	
+	@Mock
+	private Document documentMock;
+
+	private ItemScraper testSubject;
 	
 	@BeforeClass
 	public static void setup() throws IOException{
 		validItemFormat = new MessageFormat(readFile("valid-item-format.html"));
+	}
+	
+	@Before
+	public void initTestSubject() throws IOException{
+		testSubject=new ItemScraper(jsoupParserMock, itemDetailsScraperMock);
 	}
 	
 	@Test
@@ -134,9 +170,82 @@ public class ItemScraperJUnitTest {
 		testSubject.scrapeItem(itemFragment, new Item());
 	}
 	
+	@Test
+	public void shouldExtractItemDetails() throws Exception{
+		// Given
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingLinkToDetails("HREF1"));
+
+		when(jsoupParserMock.get(anyString())).thenReturn(responseMock);
+		when(responseMock.parse()).thenReturn(documentMock);
+		
+		doAnswer(anItemWithDescription("Item One Description"))
+			.when(itemDetailsScraperMock).scrapeItemDetails(eq(documentMock), any(Item.class));
+
+		final Item item = new Item();
+		
+		// When
+		testSubject.scrapeItem(itemFragment, item);
+		
+		// Then
+		assertThat(item, is(anActualItemWithDescription("Item One Description")));
+	}
+	
+	private Matcher<Item> anActualItemWithDescription(String description) {
+		return hasProperty("description", is(description));
+	}
+
+	private Answer<Void> anItemWithDescription(final String description) {
+		return new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				Item item = (Item) invocation.getArguments()[1];
+
+				item.setDescription(description);
+				return null;
+			}
+		};
+	}
+
+	private Matcher<Element> anItemWithLinkToDescription(final String expectedLinkToDetails) {
+		return new BaseMatcher<Element>() {
+
+			@Override
+			public boolean matches(Object actual) {
+				if (actual == null || !(actual instanceof Element)) {
+					return false;
+				}
+				final Element actualElement = (Element) actual;
+
+				if (!actualElement.hasAttr("href")) {
+					return false;
+				}
+				
+				final String linkToDetails = actualElement.attr("href");
+				
+				if(!linkToDetails.equals(expectedLinkToDetails)){
+					return false;
+				}
+
+				return true;
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("expected href: " + expectedLinkToDetails);
+			}
+		};
+	}
+	
 	private static String readFile(String path) throws IOException {
 		final InputStream stream = ItemScraperJUnitTest.class.getResourceAsStream(path);
 		return IOUtils.toString(stream);
+	}
+	
+	private String formatItemInjectingTitle(String title) {
+		final String[] itemValues = Arrays.copyOf(defaultItemValues, defaultItemValues.length);
+		itemValues[0] = title;
+		
+		return validItemFormat.format(itemValues);
 	}
 	
 	private String formatItemInjectingPrice(String price) {
@@ -146,9 +255,9 @@ public class ItemScraperJUnitTest {
 		return validItemFormat.format(itemValues);
 	}
 	
-	private String formatItemInjectingTitle(String title) {
+	private String formatItemInjectingLinkToDetails(String href) {
 		final String[] itemValues = Arrays.copyOf(defaultItemValues, defaultItemValues.length);
-		itemValues[0] = title;
+		itemValues[2] = href;
 		
 		return validItemFormat.format(itemValues);
 	}
