@@ -40,8 +40,8 @@ public class ItemScraper extends BasicScraper{
 	 * 
 	 * @param itemFragment the fragment containing the item to scrape.
 	 * @param item the Item to populate.
-	 * @throws InvalidStructureException
-	 * @throws IOException 
+	 * @throws InvalidStructureException when the item does not respect the known structure.
+	 * @throws IOException when it's not possible to retrieve a required linked additional web resource.
 	 * 
 	 * @see Element
 	 */

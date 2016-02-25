@@ -20,7 +20,7 @@ public class ItemDetailsScraper extends BasicScraper{
 	 * 
 	 * @param itemFragment the fragment containing the item to scrape.
 	 * @param item the Item to populate.
-	 * @throws InvalidStructureException
+	 * @throws InvalidStructureException when item details do not respect the known structure.
 	 * 
 	 * @see Element
 	 */

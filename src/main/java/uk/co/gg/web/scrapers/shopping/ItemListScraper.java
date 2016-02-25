@@ -21,6 +21,13 @@ public class ItemListScraper {
 		this.itemScraper = itemScraper;
 	}
 
+	/**
+	 * Scrape item list contained in given fragment.
+	 * @param itemListFragment the HTML fragment containing the list.
+	 * @return the scraped ItemList 
+	 * @throws InvalidStructureException when item list or embedded items do not respect the known structure.
+	 * @throws IOException when it's not possible to retrieve the given web resource or a required linked additional resource.
+	 */
 	public ItemList scrapeItemList(Element itemListFragment) throws InvalidStructureException, IOException {
 		final ItemList itemList = new ItemList();
 		
