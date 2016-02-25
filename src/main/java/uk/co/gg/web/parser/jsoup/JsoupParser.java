@@ -7,6 +7,12 @@ import javax.inject.Named;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 
+/**
+ * Wrapper around Jsoup to facilitate testing Jsoup static methods.
+ * 
+ * @author GiuseppeG
+ *
+ */
 @Named
 public class JsoupParser {
 

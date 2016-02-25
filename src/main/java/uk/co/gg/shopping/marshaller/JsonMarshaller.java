@@ -5,6 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import uk.co.gg.shopping.ItemList;
 
+/**
+ * Wrapper around Jackson's ObjectMapper to handle it as a singleton.
+ * 
+ * @author GiuseppeG.
+ *
+ */
 public class JsonMarshaller {
 
 	private static final ObjectMapper jsonMapper = new ObjectMapper();

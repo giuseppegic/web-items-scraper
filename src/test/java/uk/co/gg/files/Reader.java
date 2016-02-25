@@ -8,7 +8,7 @@ import org.apache.commons.io.IOUtils;
 public class Reader {
 	
 	/**
-	 * Read a file at position related to a base path as a string. 
+	 * Read a file located in a given path related to the test class location. 
 	 * @param path the file to read.
 	 * @param relatedClass the class indicating the base path.
 	 * @return the content of the file.
