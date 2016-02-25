@@ -8,13 +8,12 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doAnswer;
+import static uk.co.gg.files.Reader.readFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 
-import org.apache.commons.io.IOUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -45,11 +44,11 @@ public class ItemListScraperJUnitTest {
 	@Mock
 	private ItemScraper itemScraperMock;
 
-	private ItemListScraper testSubject = new ItemListScraper();
+	private ItemListScraper testSubject;
 
 	@BeforeClass
 	public static void setup() throws IOException {
-		validItemFormat = new MessageFormat(readFile("valid-item-list-format.html"));
+		validItemFormat = new MessageFormat(readFile("valid-item-list-format.html", ItemListScraperJUnitTest.class));
 	}
 
 	@Before
@@ -81,7 +80,7 @@ public class ItemListScraperJUnitTest {
 	@Test
 	public void shouldReturnEmptyListIfNoProductIsPresent() throws Exception {
 		// Given
-		final Element itemListFragment=Jsoup.parseBodyFragment(readFile("item-list-with-no-item.html"));
+		final Element itemListFragment=Jsoup.parseBodyFragment(readFile("item-list-with-no-item.html", ItemListScraperJUnitTest.class));
 		
 		// When
 		final ItemList itemList = testSubject.scrapeItemList(itemListFragment);
@@ -129,11 +128,6 @@ public class ItemListScraperJUnitTest {
 				description.appendText("expected text: " + expectedText);
 			}
 		};
-	}
-
-	private static String readFile(String path) throws IOException {
-		final InputStream stream = ItemListScraperJUnitTest.class.getResourceAsStream(path);
-		return IOUtils.toString(stream);
 	}
 
 	private String formatItemListInjectingItem(String... itemFragments) {

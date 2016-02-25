@@ -2,6 +2,7 @@ package uk.co.gg.shopping.marshaller;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static uk.co.gg.files.Reader.readFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import uk.co.gg.shopping.Item;
 import uk.co.gg.shopping.ItemList;
 import uk.co.gg.web.scrapers.shopping.ItemListScraperJUnitTest;
+
 
 public class JsonMarshallerJUnitTest {
 
@@ -41,12 +43,6 @@ public class JsonMarshallerJUnitTest {
 		final String itemListJson = testSubject.marshall(itemList);
 		
 		// Then
-		assertThat(itemListJson, is(readFile("test-item-list.json")));
-	}
-	
-	
-	private static String readFile(String path) throws IOException {
-		final InputStream stream = JsonMarshallerJUnitTest.class.getResourceAsStream(path);
-		return IOUtils.toString(stream);
+		assertThat(itemListJson, is(readFile("test-item-list.json", JsonMarshallerJUnitTest.class)));
 	}
 }

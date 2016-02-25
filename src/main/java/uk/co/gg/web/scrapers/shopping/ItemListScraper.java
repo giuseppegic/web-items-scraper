@@ -2,6 +2,9 @@ package uk.co.gg.web.scrapers.shopping;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -9,14 +12,18 @@ import uk.co.gg.shopping.Item;
 import uk.co.gg.shopping.ItemList;
 import uk.co.gg.web.scrapers.InvalidStructureException;
 
+/**
+ * Scraper to extract all items in a list contained in a HTML fragment.
+ * 
+ * @author GiuseppeG
+ *
+ */
+@Named
 public class ItemListScraper {
 
 	private ItemScraper itemScraper;
 	
-	public ItemListScraper(){
-		itemScraper = new ItemScraper();
-	}
-	
+	@Inject
 	public ItemListScraper(ItemScraper itemScraper){
 		this.itemScraper = itemScraper;
 	}

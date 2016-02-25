@@ -1,4 +1,4 @@
-package com.gg.shopping.starter;
+package uk.co.gg.web.scrapers.shopping;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -14,7 +14,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import uk.co.gg.shopping.ItemList;
 import uk.co.gg.web.parser.jsoup.JsoupParser;
-import uk.co.gg.web.scrapers.shopping.ItemListScraper;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ShoppingWebScraperJUnitTest {

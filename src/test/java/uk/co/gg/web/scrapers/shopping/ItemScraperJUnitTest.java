@@ -41,7 +41,7 @@ public class ItemScraperJUnitTest {
 	
 	private static MessageFormat validItemFormat;
 	
-	private static final String[] defaultItemValues={"title", "£0.10", "linkToDetails"};
+	private static final String[] defaultItemValues={"title", "&pound0.10", "linkToDetails"};
 	
 	@Rule
 	public ExpectedException expected= ExpectedException.none();
@@ -113,7 +113,7 @@ public class ItemScraperJUnitTest {
 	@Test
 	public void shouldExtractItemPrice() throws Exception{
 		// Given
-		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice("£1.80"));
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice("&pound1.80"));
 		final Item item = new Item();
 		
 		// When
@@ -138,7 +138,7 @@ public class ItemScraperJUnitTest {
 	@Test
 	public void shouldThrowInvalidStructureExceptionWhenItemPriceIsNotANumber() throws Exception{
 		// Given
-		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice("£item"));
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice("&pounditem"));
 		
 		// Expect
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price is not a number"));
