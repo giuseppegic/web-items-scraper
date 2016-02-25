@@ -17,8 +17,6 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
