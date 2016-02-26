@@ -10,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 /**
  * An ItemList consists of a list of items and a total price.
  * 
- * <p>ItemList can be serialized to JSON using Jackson. Json format sample can be found <a href="file:///D:/NetBeans/HMan/easy.txt">here</a>.</p>
+ * <p>ItemList can be serialized to JSON using Jackson.</p>
+ * <p>A JSON sample format can be found in src/test/resources/uk/co/gg/web/scrapers/shopping/application/itest-item-list.json.</p>
  * 
  * @author GiuseppeG
  */

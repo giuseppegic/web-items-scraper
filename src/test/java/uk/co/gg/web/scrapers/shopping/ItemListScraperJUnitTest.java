@@ -56,6 +56,7 @@ public class ItemListScraperJUnitTest {
 		testSubject = new ItemListScraper(itemScraperMock);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldExtractListOfItems() throws Exception {
 		// Given

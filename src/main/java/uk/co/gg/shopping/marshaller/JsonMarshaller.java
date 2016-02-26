@@ -15,8 +15,19 @@ public class JsonMarshaller {
 
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
 	
-	public String marshall(ItemList itemList) throws JsonProcessingException {
-		return jsonMapper.writeValueAsString(itemList);
+	/**
+	 * Serialize the given item list to JSON.
+	 * @param itemList the item list to serialize.
+	 * @param prettyPrint if false generate a compact JSON, otherwise it generates an indented one.
+	 * @return the serialized list.
+	 * @throws JsonProcessingException if an error occurs while trying to serialize the list.
+	 */
+	public String marshall(ItemList itemList, boolean prettyPrint) throws JsonProcessingException {
+		if(prettyPrint){
+			return jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(itemList);
+		} else {
+			return jsonMapper.writeValueAsString(itemList);
+		}
 	}
 
 }

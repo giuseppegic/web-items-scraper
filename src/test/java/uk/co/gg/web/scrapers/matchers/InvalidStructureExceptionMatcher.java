@@ -29,6 +29,7 @@ public class InvalidStructureExceptionMatcher extends BaseMatcher<Exception>{
 		if(!e.getHtmlFragment().equals(fragmentHtml)){
 			return false;
 		}
+		
 		if(!e.getMessage().equals(error)){
 			return false;
 		}
