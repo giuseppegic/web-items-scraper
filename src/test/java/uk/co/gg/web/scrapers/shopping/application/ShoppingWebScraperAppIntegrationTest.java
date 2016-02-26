@@ -53,6 +53,8 @@ public class ShoppingWebScraperAppIntegrationTest {
 	private ArgumentCaptor<String> messageCaptor;
 	
 	private Injector injector;
+
+	private ShoppingWebScraperApp testSubject;
 	
 	@Before
 	public void setup() throws IOException{
@@ -66,6 +68,7 @@ public class ShoppingWebScraperAppIntegrationTest {
 		
 		mockJsoupParser();
 		
+		testSubject = injector.getInstance(ShoppingWebScraperApp.class);
 	}
 	
 	@Test
@@ -79,11 +82,8 @@ public class ShoppingWebScraperAppIntegrationTest {
 	
 	@Test
 	public void shouldParseTestItemListAndGenerateCompactJson() throws Exception{
-		// Given
-		final ShoppingWebScraperApp shoppingWebScraperApp = injector.getInstance(ShoppingWebScraperApp.class);
-		
 		// When
-		final String itemListJson = shoppingWebScraperApp.scrapeItemListPageToJson(LIST_ITEM_URL, false);
+		final String itemListJson = testSubject.scrapeItemListPageToJson(LIST_ITEM_URL, false);
 		
 		// Then
 		assertThat(itemListJson, is(readFile("itest-item-list.json", ShoppingWebScraperAppIntegrationTest.class)));

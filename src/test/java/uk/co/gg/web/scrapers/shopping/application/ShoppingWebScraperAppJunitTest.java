@@ -93,7 +93,6 @@ public class ShoppingWebScraperAppJunitTest {
 		mockJsoupParser();
 		
 		testSubject = injector.getInstance(ShoppingWebScraperApp.class);
-
 	}
 
 	@Test
