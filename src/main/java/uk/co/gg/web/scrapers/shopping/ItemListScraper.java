@@ -1,7 +1,5 @@
 package uk.co.gg.web.scrapers.shopping;
 
-import java.io.IOException;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -33,9 +31,8 @@ public class ItemListScraper {
 	 * @param itemListFragment the HTML fragment containing the list.
 	 * @return the scraped ItemList 
 	 * @throws InvalidStructureException when item list or embedded items do not respect the known structure.
-	 * @throws IOException when it's not possible to retrieve the given web resource or a required linked additional resource.
 	 */
-	public ItemList scrapeItemList(Element itemListFragment) throws InvalidStructureException, IOException {
+	public ItemList scrapeItemList(Element itemListFragment) throws InvalidStructureException {
 		final ItemList itemList = new ItemList();
 		
 		Elements itemsFragments = itemListFragment.select(".product");

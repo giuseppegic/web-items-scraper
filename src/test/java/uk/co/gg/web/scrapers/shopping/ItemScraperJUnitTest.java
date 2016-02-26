@@ -8,15 +8,14 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
+import static uk.co.gg.files.Reader.readFile;
 import static uk.co.gg.web.scrapers.matchers.InvalidStructureExceptionMatcher.isInvalidHtmlFragmentWithError;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
-import org.apache.commons.io.IOUtils;
 import org.hamcrest.Matcher;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
@@ -62,7 +61,7 @@ public class ItemScraperJUnitTest {
 	
 	@BeforeClass
 	public static void setup() throws IOException{
-		validItemFormat = new MessageFormat(readFile("valid-item-format.html"));
+		validItemFormat = new MessageFormat(readFile("valid-item-format.html", ItemScraperJUnitTest.class));
 	}
 	
 	@Before
@@ -101,7 +100,7 @@ public class ItemScraperJUnitTest {
 	@Test
 	public void shouldThrowInvalidStructureExceptionWhenUnableToFindTitle() throws Exception{
 		// Given
-		final Element itemFragment=Jsoup.parseBodyFragment(readFile("invalid-title-item-format.html"));
+		final Element itemFragment=Jsoup.parseBodyFragment(readFile("invalid-title-item-format.html", ItemScraperJUnitTest.class));
 		
 		// Expect
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Unable to find Title"));
@@ -111,9 +110,22 @@ public class ItemScraperJUnitTest {
 	}
 	
 	@Test
-	public void shouldExtractItemPrice() throws Exception{
+	public void shouldExtractItemPriceWithIncorrectEntity() throws Exception{
 		// Given
 		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice("&pound1.80"));
+		final Item item = new Item();
+		
+		// When
+		testSubject.scrapeItem(itemFragment, item);
+		
+		// Then
+		assertThat(item.getPrice(), is(new BigDecimal("1.80")));
+	}
+	
+	@Test
+	public void shouldExtractItemPrice() throws Exception{
+		// Given
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice("&pound;1.80"));
 		final Item item = new Item();
 		
 		// When
@@ -136,9 +148,21 @@ public class ItemScraperJUnitTest {
 	}
 
 	@Test
-	public void shouldThrowInvalidStructureExceptionWhenItemPriceIsNotANumber() throws Exception{
+	public void shouldThrowInvalidStructureExceptionWhenItemPriceIsNotANumberAndEntityIsIncorrect() throws Exception{
 		// Given
 		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice("&pounditem"));
+		
+		// Expect
+		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price is not a number"));
+				
+		// When
+		testSubject.scrapeItem(itemFragment, new Item());
+	}
+	
+	@Test
+	public void shouldThrowInvalidStructureExceptionWhenItemPriceIsNotANumber() throws Exception{
+		// Given
+		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice("&pound;item"));
 		
 		// Expect
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price is not a number"));
@@ -153,7 +177,7 @@ public class ItemScraperJUnitTest {
 		final Element itemFragment=Jsoup.parseBodyFragment(formatItemInjectingPrice(""));
 		
 		// Expect
-		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Price cannot be empty"));
+		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Error while extracting text from element 'Price'"));
 				
 		// When
 		testSubject.scrapeItem(itemFragment, new Item());
@@ -162,7 +186,7 @@ public class ItemScraperJUnitTest {
 	@Test
 	public void shouldThrowInvalidStructureExceptionWhenItemPriceIsNotFound() throws Exception{
 		// Given
-		final Element itemFragment=Jsoup.parseBodyFragment(readFile("invalid-price-item-format.html"));
+		final Element itemFragment=Jsoup.parseBodyFragment(readFile("invalid-price-item-format.html", ItemScraperJUnitTest.class));
 		
 		// Expect
 		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Unable to find Price"));
@@ -244,30 +268,22 @@ public class ItemScraperJUnitTest {
 			}
 		};
 	}
-
-	
-	private static String readFile(String path) throws IOException {
-		final InputStream stream = ItemScraperJUnitTest.class.getResourceAsStream(path);
-		return IOUtils.toString(stream);
-	}
 	
 	private String formatItemInjectingTitle(String title) {
-		final String[] itemValues = Arrays.copyOf(defaultItemValues, defaultItemValues.length);
-		itemValues[0] = title;
-		
-		return validItemFormat.format(itemValues);
+		return formatItemInjectingElement(0, title);
 	}
 	
 	private String formatItemInjectingPrice(String price) {
-		final String[] itemValues = Arrays.copyOf(defaultItemValues, defaultItemValues.length);
-		itemValues[1] = price;
-		
-		return validItemFormat.format(itemValues);
+		return formatItemInjectingElement(1, price);
 	}
 	
 	private String formatItemInjectingLinkToDetails(String href) {
+		return formatItemInjectingElement(2, href);
+	}
+	
+	private String formatItemInjectingElement(int position, String element) {
 		final String[] itemValues = Arrays.copyOf(defaultItemValues, defaultItemValues.length);
-		itemValues[2] = href;
+		itemValues[position] = element;
 		
 		return validItemFormat.format(itemValues);
 	}

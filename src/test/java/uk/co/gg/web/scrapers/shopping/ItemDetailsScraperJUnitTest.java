@@ -63,7 +63,7 @@ public class ItemDetailsScraperJUnitTest {
 		final Element itemFragment=Jsoup.parseBodyFragment(formatDetailsInjectingDescription("",""));
 		
 		// Expect
-		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Description cannot be empty"));
+		expected.expect(isInvalidHtmlFragmentWithError(itemFragment.html(), "Error while extracting text from element 'Description'"));
 		
 		// When
 		testSubject.scrapeItemDetails(itemFragment, new Item());

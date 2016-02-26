@@ -1,0 +1,9 @@
+{
+  "results" : [ {
+    "title" : "Item 1 title",
+    "size" : "100kb",
+    "unit_price" : 1.80,
+    "description" : "Item 1 description"
+  } ],
+  "total" : 1.80
+}

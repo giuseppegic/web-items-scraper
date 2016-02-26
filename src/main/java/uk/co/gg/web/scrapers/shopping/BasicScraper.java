@@ -2,11 +2,14 @@ package uk.co.gg.web.scrapers.shopping;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.co.gg.web.scrapers.InvalidStructureException;
 import uk.co.gg.web.scrapers.InvalidStructureSimpleException;
 
 public class BasicScraper {
+	private static final Logger LOGGER = LoggerFactory.getLogger(BasicScraper.class);
 	
 	protected Element extractElement(String selector, String elementName, Element itemFragment) throws InvalidStructureException {
 		final Element fragment = itemFragment.select(selector).first();
@@ -24,6 +27,10 @@ public class BasicScraper {
 			throw new InvalidStructureSimpleException(elementName + " cannot be empty");
 		}
 		
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Scraped "+elementName+": " + elementValue);
+		}
+		
 		return elementValue;
 	}
 	
@@ -33,7 +40,7 @@ public class BasicScraper {
 		try {
 			return extractElementText(elementFragment, elementName, captureNestedValues);
 		} catch (InvalidStructureSimpleException e) {
-			throw new InvalidStructureException(e.getMessage(), parentFragment.html());
+			throw new InvalidStructureException("Error while extracting text from element '"+elementName+"'", parentFragment.html(), e);
 		}
 	}
 }

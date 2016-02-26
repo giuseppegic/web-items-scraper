@@ -24,8 +24,6 @@ public class ShoppingWebScraper {
 
 	private final ItemListScraper itemListScraper;
 
-	
-
 	@Inject
 	public ShoppingWebScraper(JsoupParser jsoupParser, ItemListScraper itemListScraper) {
 		this.jsoupParser = jsoupParser;
